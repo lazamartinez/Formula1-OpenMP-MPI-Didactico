@@ -1,0 +1,2399 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paradigmas y Lenguajes de Programación</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/dracula.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/clike/clike.min.js"></script>
+
+    <style>
+        /* Estilos modernos para Formula 1 + Programación Paralela */
+        :root {
+            --f1-red: #e10600;
+            --f1-black: #15151e;
+            --f1-white: #ffffff;
+            --f1-gray: #38383f;
+            --f1-blue: #0066cc;
+            --omp-yellow: #ffcc00;
+            --mpi-blue: #0099ff;
+            --grid-green: #00cc66;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--f1-black) 0%, #2a2a35 100%);
+            color: var(--f1-white);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header con efecto F1 */
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 30px;
+            background: linear-gradient(90deg, var(--f1-red) 0%, #ff2b2b 100%);
+            border-radius: 15px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            animation: shine 3s infinite;
+        }
+
+        @keyframes shine {
+            0% {
+                left: -100%;
+            }
+
+            100% {
+                left: 100%;
+            }
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        /* Grid de estadísticas */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, var(--f1-gray) 0%, #2a2a35 100%);
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+            border-left: 4px solid var(--f1-red);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(225, 6, 0, 0.3);
+        }
+
+        .stat-card h3 {
+            color: var(--f1-red);
+            margin-bottom: 15px;
+            font-size: 1.1em;
+        }
+
+        .stat-card .value {
+            font-size: 2em;
+            font-weight: bold;
+            color: var(--f1-white);
+        }
+
+        /* Secciones temáticas */
+        .section {
+            background: rgba(40, 40, 48, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            border: 1px solid var(--f1-gray);
+        }
+
+        .section h2 {
+            color: var(--f1-red);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--f1-red);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section h2::before {
+            content: '🏎️';
+            font-size: 1.2em;
+        }
+
+        /* Formulario moderno */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .form-grid input {
+            padding: 12px;
+            border: 2px solid var(--f1-gray);
+            border-radius: 8px;
+            background: var(--f1-black);
+            color: var(--f1-white);
+            font-size: 1em;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-grid input:focus {
+            outline: none;
+            border-color: var(--f1-red);
+        }
+
+        button {
+            background: linear-gradient(135deg, var(--f1-red) 0%, #ff2b2b 100%);
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: bold;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(225, 6, 0, 0.4);
+        }
+
+        /* Búsqueda */
+        .search-section {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .search-section input {
+            flex: 1;
+            min-width: 250px;
+            padding: 12px;
+            border: 2px solid var(--f1-gray);
+            border-radius: 8px;
+            background: var(--f1-black);
+            color: var(--f1-white);
+        }
+
+        /* Grid de pilotos */
+        .pilotos-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .piloto-card {
+            background: linear-gradient(135deg, var(--f1-gray) 0%, #2a2a35 100%);
+            padding: 20px;
+            border-radius: 12px;
+            border-left: 4px solid;
+            transition: transform 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .piloto-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .piloto-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--f1-red), var(--omp-yellow), var(--mpi-blue));
+        }
+
+        .piloto-card h3 {
+            color: var(--f1-white);
+            margin-bottom: 10px;
+            font-size: 1.3em;
+        }
+
+        .piloto-card .equipo {
+            color: var(--f1-red);
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .piloto-card .stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-top: 15px;
+        }
+
+        .piloto-card .stat {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 8px;
+            border-radius: 6px;
+            text-align: center;
+            font-size: 0.9em;
+        }
+
+        /* Secciones de programación paralela */
+        .parallel-section {
+            background: linear-gradient(135deg, var(--f1-black) 0%, #1a1a24 100%);
+            padding: 25px;
+            border-radius: 15px;
+            margin: 30px 0;
+            border: 2px solid transparent;
+            background-clip: padding-box;
+            position: relative;
+        }
+
+        .parallel-section::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, var(--omp-yellow), var(--mpi-blue), var(--grid-green));
+            border-radius: 17px;
+            z-index: -1;
+        }
+
+        .parallel-section h3 {
+            color: var(--f1-white);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .parallel-section h3::before {
+            content: '⚡';
+            font-size: 1.2em;
+        }
+
+        .parallel-section p {
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+
+        .code-example {
+            background: #1e1e1e;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            overflow-x: auto;
+            border-left: 4px solid var(--omp-yellow);
+        }
+
+        .code-example pre {
+            color: #00ff00;
+            font-family: 'Courier New', monospace;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .search-section {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .pilotos-grid {
+                grid-template-columns: 1fr;
+            }
+
+            header h1 {
+                font-size: 2em;
+            }
+        }
+
+        /* Animaciones */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .section,
+        .stat-card,
+        .piloto-card {
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        /* Scroll personalizado */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--f1-black);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--f1-red);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #ff2b2b;
+        }
+    </style>
+    <style>
+        /* Nuevos estilos para las secciones educativas */
+        .learning-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin: 30px 0;
+        }
+
+        .learning-card {
+            background: linear-gradient(135deg, var(--f1-gray) 0%, #2a2a35 100%);
+            border-radius: 15px;
+            padding: 25px;
+            border-left: 4px solid;
+            transition: transform 0.3s ease;
+        }
+
+        .learning-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .learning-card.omp {
+            border-left-color: var(--omp-yellow);
+        }
+
+        .learning-card.mpi {
+            border-left-color: var(--mpi-blue);
+        }
+
+        .simulator-container {
+            background: rgba(30, 30, 40, 0.9);
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 15px;
+        }
+
+        .control-panel {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .control-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .control-item label {
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: var(--f1-white);
+        }
+
+        .control-item input {
+            padding: 10px;
+            border-radius: 8px;
+            border: 2px solid var(--f1-gray);
+            background: var(--f1-black);
+            color: var(--f1-white);
+        }
+
+        .results-panel {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .result-card {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .result-value {
+            font-size: 1.8em;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .speedup-indicator {
+            height: 10px;
+            background: linear-gradient(90deg, red, yellow, green);
+            border-radius: 5px;
+            margin-top: 10px;
+            position: relative;
+        }
+
+        .speedup-marker {
+            position: absolute;
+            top: -5px;
+            width: 4px;
+            height: 20px;
+            background: white;
+            transform: translateX(-50%);
+        }
+
+        .code-editor {
+            margin-top: 20px;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .editor-header {
+            background: var(--f1-black);
+            padding: 10px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .editor-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .editor-btn {
+            padding: 6px 12px;
+            border-radius: 5px;
+            background: var(--f1-gray);
+            border: none;
+            color: var(--f1-white);
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: background 0.2s;
+        }
+
+        .editor-btn.run {
+            background: var(--grid-green);
+        }
+
+        .editor-btn.reset {
+            background: var(--f1-red);
+        }
+
+        .mpi-visualization {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .mpi-process {
+            background: var(--f1-gray);
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            position: relative;
+            min-height: 120px;
+        }
+
+        .process-id {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: var(--mpi-blue);
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .process-data {
+            margin-top: 30px;
+            font-size: 0.9em;
+        }
+
+        .message {
+            position: absolute;
+            background: var(--omp-yellow);
+            color: black;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.8em;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .exercise-container {
+            background: rgba(30, 30, 40, 0.9);
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 20px;
+        }
+
+        .exercise-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .difficulty-badge {
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+
+        .difficulty-easy {
+            background: var(--grid-green);
+            color: black;
+        }
+
+        .difficulty-medium {
+            background: var(--omp-yellow);
+            color: black;
+        }
+
+        .difficulty-hard {
+            background: var(--f1-red);
+            color: white;
+        }
+
+        .hint-container {
+            margin-top: 15px;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            border-left: 3px solid var(--mpi-blue);
+        }
+
+        .hint-title {
+            font-weight: bold;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Nuevos estilos para las mejoras */
+        .achievements-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .achievement-card {
+            background: linear-gradient(135deg, var(--f1-gray) 0%, #2a2a35 100%);
+            border-radius: 12px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            border-left: 4px solid var(--omp-yellow);
+            transition: transform 0.3s ease;
+        }
+
+        .achievement-card.locked {
+            opacity: 0.6;
+            border-left-color: var(--f1-gray);
+        }
+
+        .achievement-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .achievement-icon {
+            width: 50px;
+            height: 50px;
+            background: var(--f1-black);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+        }
+
+        .achievement-info {
+            flex: 1;
+        }
+
+        .achievement-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .achievement-desc {
+            font-size: 0.9em;
+            opacity: 0.8;
+        }
+
+        .progress-bar {
+            height: 6px;
+            background: var(--f1-black);
+            border-radius: 3px;
+            margin-top: 8px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--grid-green);
+            border-radius: 3px;
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        .telemetry-container {
+            background: rgba(30, 30, 40, 0.9);
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 20px;
+        }
+
+        .telemetry-chart {
+            height: 200px;
+            background: var(--f1-black);
+            border-radius: 8px;
+            margin: 15px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .chart-line {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--omp-yellow);
+            opacity: 0.3;
+        }
+
+        .data-point {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: var(--f1-red);
+            border-radius: 50%;
+            transform: translate(-50%, 50%);
+        }
+
+        .strategy-simulator {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .strategy-visualization {
+            background: var(--f1-black);
+            border-radius: 8px;
+            padding: 15px;
+            height: 300px;
+            position: relative;
+        }
+
+        .race-track {
+            position: absolute;
+            top: 50%;
+            left: 20px;
+            right: 20px;
+            height: 4px;
+            background: var(--f1-white);
+            transform: translateY(-50%);
+        }
+
+        .car-marker {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            top: 50%;
+        }
+
+        .controls-panel {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .control-button {
+            padding: 10px;
+            background: var(--f1-gray);
+            border: none;
+            border-radius: 6px;
+            color: var(--f1-white);
+            cursor: pointer;
+            text-align: center;
+            transition: background 0.2s;
+        }
+
+        .control-button:hover {
+            background: var(--f1-red);
+        }
+
+        .stats-grid-improved {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .stat-item {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.8em;
+            font-weight: bold;
+            margin: 5px 0;
+        }
+
+        .stat-label {
+            font-size: 0.9em;
+            opacity: 0.8;
+        }
+
+        .leaderboard {
+            margin-top: 20px;
+            background: var(--f1-black);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .leaderboard-header {
+            background: var(--f1-red);
+            padding: 12px 15px;
+            font-weight: bold;
+        }
+
+        .leaderboard-item {
+            display: grid;
+            grid-template-columns: 40px 1fr 80px;
+            gap: 15px;
+            padding: 12px 15px;
+            border-bottom: 1px solid var(--f1-gray);
+        }
+
+        .leaderboard-item:last-child {
+            border-bottom: none;
+        }
+
+        .leaderboard-rank {
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .leaderboard-name {
+            font-weight: 500;
+        }
+
+        .leaderboard-score {
+            text-align: right;
+            font-weight: bold;
+            color: var(--omp-yellow);
+        }
+
+        /* WebAssembly console */
+        .wasm-console {
+            background: #1e1e1e;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+            font-family: monospace;
+            color: #00ff00;
+            height: 150px;
+            overflow-y: auto;
+        }
+
+        .console-line {
+            margin-bottom: 5px;
+        }
+
+        .console-command {
+            color: #ffff00;
+        }
+
+        .console-output {
+            color: #00ff00;
+        }
+
+        .console-error {
+            color: #ff3333;
+        }
+    </style>
+    <style>
+        /* Estilos para los botones de ayuda y modales */
+        .help-button {
+            background: var(--mpi-blue);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            font-size: 14px;
+            cursor: pointer;
+            margin-left: 10px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+
+        .help-button:hover {
+            background: var(--f1-blue);
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background: var(--f1-black);
+            border-radius: 12px;
+            padding: 25px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+            border: 2px solid var(--omp-yellow);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            color: var(--f1-white);
+            font-size: 1.5em;
+            cursor: pointer;
+        }
+
+        .modal-title {
+            color: var(--omp-yellow);
+            margin-bottom: 15px;
+            padding-right: 30px;
+        }
+
+        .theory-content {
+            line-height: 1.6;
+        }
+
+        .theory-content h4 {
+            color: var(--f1-red);
+            margin: 15px 0 8px 0;
+        }
+
+        .theory-content ul {
+            padding-left: 20px;
+            margin: 10px 0;
+        }
+
+        .theory-content li {
+            margin-bottom: 8px;
+        }
+
+        .theory-content code {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+
+        .reference {
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid var(--f1-gray);
+            font-size: 0.9em;
+            opacity: 0.8;
+        }
+    </style>
+
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>Paradigmas y Lenguajes de Programación 2025</h1>
+            <h2>Demostración didáctica - Aprender OpenMP y MPI</h2>
+            <h3>🏎️ Sistema de gestión de pilotos de Formula 1</h3>
+        </header>
+
+        <!-- Sección de Programación Paralela -->
+        <div class="parallel-section">
+            <h3><i class="fas fa-microchip"></i> Tecnologías de Programación Paralela</h3>
+            <div class="tech-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px;">
+                <div class="tech-card"
+                    style="background: rgba(255, 204, 0, 0.1); padding: 15px; border-radius: 10px; border-left: 4px solid var(--omp-yellow);">
+                    <h4 style="color: var(--omp-yellow); margin-bottom: 10px;"><i class="fas fa-bolt"></i> OpenMP</h4>
+                    <p style="font-size: 0.9em;">Paralelización multihilo en sistemas de memoria compartida. Ideal para
+                        bucles y operaciones vectorizadas.</p>
+                </div>
+                <div class="tech-card"
+                    style="background: rgba(0, 153, 255, 0.1); padding: 15px; border-radius: 10px; border-left: 4px solid var(--mpi-blue);">
+                    <h4 style="color: var(--mpi-blue); margin-bottom: 10px;"><i class="fas fa-network-wired"></i> MPI
+                    </h4>
+                    <p style="font-size: 0.9em;">Interfaz de paso de mensajes para computación distribuida. Perfecta
+                        para clusters y supercomputadoras.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal-overlay" id="theory-modal">
+            <div class="modal-content">
+                <button class="modal-close" onclick="closeTheoryModal()">&times;</button>
+                <h3 class="modal-title" id="modal-title">Título</h3>
+                <div class="theory-content" id="modal-content">
+                    Contenido aquí...
+                </div>
+                <div class="reference" id="modal-reference"></div>
+            </div>
+        </div>
+
+        <!-- Sección de Logros -->
+        <div class="section">
+            <h2><i class="fas fa-trophy"></i> Sistema de Logros</h2>
+            <p>Completa ejercicios y desafíos para desbloquear logros y subir de nivel.</p>
+
+            <div class="achievements-container">
+                <div class="achievement-card">
+                    <div class="achievement-icon" style="color: var(--omp-yellow);">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <div class="achievement-info">
+                        <div class="achievement-title">Primeros Pasos en OpenMP</div>
+                        <div class="achievement-desc">Completa tu primer ejercicio con OpenMP</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 100%;"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="achievement-card">
+                    <div class="achievement-icon" style="color: var(--mpi-blue);">
+                        <i class="fas fa-network-wired"></i>
+                    </div>
+                    <div class="achievement-info">
+                        <div class="achievement-title">Comunicación MPI</div>
+                        <div class="achievement-desc">Realiza 5 simulaciones de comunicación MPI</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 60%;"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="achievement-card locked">
+                    <div class="achievement-icon">
+                        <i class="fas fa-calculator"></i>
+                    </div>
+                    <div class="achievement-info">
+                        <div class="achievement-title">Maestro de π</div>
+                        <div class="achievement-desc">Calcula π con 1M de iteraciones en menos de 100ms</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 0%;"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="achievement-card locked">
+                    <div class="achievement-icon">
+                        <i class="fas fa-rocket"></i>
+                    </div>
+                    <div class="achievement-info">
+                        <div class="achievement-title">Estratega de Carreras</div>
+                        <div class="achievement-desc">Completa 3 simulaciones de estrategia</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 0%;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sección de Telemetría -->
+        <div class="section">
+            <h2><i class="fas fa-wave-square"></i> Procesamiento de Telemetría con OpenMP</h2>
+            <p>Analiza datos de telemetría de un coche de F1 usando técnicas de procesamiento paralelo.</p>
+
+            <div class="telemetry-container">
+                <div class="control-panel">
+                    <div class="control-item">
+                        <label for="telemetry-file">Seleccionar archivo de telemetría:</label>
+                        <input type="file" id="telemetry-file" accept=".csv,.txt">
+                    </div>
+                    <div class="control-item">
+                        <label for="analysis-type">Tipo de análisis:</label>
+                        <select id="analysis-type"
+                            style="padding: 10px; border-radius: 8px; background: var(--f1-black); color: var(--f1-white); border: 2px solid var(--f1-gray);">
+                            <option value="speed">Velocidad</option>
+                            <option value="rpm">RPM del motor</option>
+                            <option value="throttle">Acelerador</option>
+                            <option value="brake">Frenado</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button onclick="processTelemetry()" style="width: 100%; margin-bottom: 20px;">
+                    <i class="fas fa-cogs"></i> Procesar Telemetría con OpenMP
+                </button>
+
+                <div class="telemetry-chart" id="telemetry-chart">
+                    <div class="chart-line" style="bottom: 25%;"></div>
+                    <div class="chart-line" style="bottom: 50%;"></div>
+                    <div class="chart-line" style="bottom: 75%;"></div>
+                    <!-- Los puntos de datos se generarán dinámicamente -->
+                </div>
+
+                <div class="stats-grid-improved">
+                    <div class="stat-item">
+                        <div class="stat-label">Velocidad Máxima</div>
+                        <div class="stat-value" id="max-speed">-</div>
+                        <div class="stat-label">km/h</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Velocidad Promedio</div>
+                        <div class="stat-value" id="avg-speed">-</div>
+                        <div class="stat-label">km/h</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Tiempo de Procesamiento</div>
+                        <div class="stat-value" id="process-time">-</div>
+                        <div class="stat-label">ms</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Speedup</div>
+                        <div class="stat-value" id="telemetry-speedup">-</div>
+                        <div class="stat-label">x</div>
+                    </div>
+                </div>
+
+                <div class="wasm-console" id="telemetry-console">
+                    <div class="console-line"><span class="console-command">></span> Esperando datos de telemetría...
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Simulación de Estrategia -->
+        <div class="section">
+            <h2><i class="fas fa-chess"></i> Simulación de Estrategia con MPI</h2>
+            <p>Simula diferentes estrategias de carrera usando procesos MPI para calcular la mejor opción.</p>
+
+            <div class="telemetry-container">
+                <div class="control-panel">
+                    <div class="control-item">
+                        <label for="circuit-select">Circuito:</label>
+                        <select id="circuit-select"
+                            style="padding: 10px; border-radius: 8px; background: var(--f1-black); color: var(--f1-white); border: 2px solid var(--f1-gray);">
+                            <option value="monaco">Monaco</option>
+                            <option value="monza">Monza</option>
+                            <option value="spa">Spa-Francorchamps</option>
+                            <option value="silverstone">Silverstone</option>
+                        </select>
+                    </div>
+                    <div class="control-item">
+                        <label for="weather-select">Clima:</label>
+                        <select id="weather-select"
+                            style="padding: 10px; border-radius: 8px; background: var(--f1-black); color: var(--f1-white); border: 2px solid var(--f1-gray);">
+                            <option value="dry">Seco</option>
+                            <option value="wet">Lluvia</option>
+                            <option value="mixed">Mixto</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="strategy-simulator">
+                    <div>
+                        <h3 style="margin-bottom: 15px;">Opciones de Estrategia</h3>
+                        <div class="controls-panel">
+                            <div class="control-button" onclick="simulateStrategy(1)">1 Parada</div>
+                            <div class="control-button" onclick="simulateStrategy(2)">2 Paradas</div>
+                            <div class="control-button" onclick="simulateStrategy(0)">Sin Paradas</div>
+                            <div class="control-button" onclick="simulateStrategy(3)">3 Paradas</div>
+                        </div>
+
+                        <div style="margin-top: 20px;">
+                            <h3 style="margin-bottom: 10px;">Resultados de Simulación</h3>
+                            <div class="wasm-console" id="strategy-console">
+                                <div class="console-line"><span class="console-command">></span> Ejecuta una simulación
+                                    para ver resultados</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="strategy-visualization">
+                        <div class="race-track"></div>
+                        <div class="car-marker" style="left: 30%; background: var(--f1-red);"></div>
+                        <div class="car-marker" style="left: 50%; background: var(--mpi-blue);"></div>
+                        <div class="car-marker" style="left: 70%; background: var(--omp-yellow);"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Análisis Estadístico -->
+        <div class="section">
+            <h2><i class="fas fa-chart-bar"></i> Análisis Estadístico con Reducciones MPI</h2>
+            <p>Realiza análisis estadístico sobre datos históricos de carreras usando operaciones de reducción MPI.</p>
+
+            <div class="telemetry-container">
+                <div class="control-panel">
+                    <div class="control-item">
+                        <label for="analysis-metric">Métrica a analizar:</label>
+                        <select id="analysis-metric"
+                            style="padding: 10px; border-radius: 8px; background: var(--f1-black); color: var(--f1-white); border: 2px solid var(--f1-gray);">
+                            <option value="points">Puntos por carrera</option>
+                            <option value="overtakes">Adelantamientos</option>
+                            <option value="pitstops">Tiempos de pitstop</option>
+                            <option value="qualifying">Diferencia en clasificación</option>
+                        </select>
+                    </div>
+                    <div class="control-item">
+                        <label for="mpi-processes-stats">Número de procesos MPI:</label>
+                        <input type="number" id="mpi-processes-stats" value="4" min="2" max="16"
+                            style="padding: 10px; border-radius: 8px; border: 2px solid var(--f1-gray); background: var(--f1-black); color: var(--f1-white);">
+                    </div>
+                </div>
+
+                <button onclick="runStatisticalAnalysis()" style="width: 100%; margin: 20px 0;">
+                    <i class="fas fa-calculator"></i> Ejecutar Análisis con MPI
+                </button>
+
+                <div class="stats-grid-improved">
+                    <div class="stat-item">
+                        <div class="stat-label">Suma Total</div>
+                        <div class="stat-value" id="stat-sum">-</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Promedio</div>
+                        <div class="stat-value" id="stat-avg">-</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Máximo</div>
+                        <div class="stat-value" id="stat-max">-</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Mínimo</div>
+                        <div class="stat-value" id="stat-min">-</div>
+                    </div>
+                </div>
+
+                <div class="leaderboard">
+                    <div class="leaderboard-header">Top 5 Pilotos</div>
+                    <div class="leaderboard-item">
+                        <div class="leaderboard-rank">1</div>
+                        <div class="leaderboard-name">Lewis Hamilton</div>
+                        <div class="leaderboard-score">103</div>
+                    </div>
+                    <div class="leaderboard-item">
+                        <div class="leaderboard-rank">2</div>
+                        <div class="leaderboard-name">Max Verstappen</div>
+                        <div class="leaderboard-score">60</div>
+                    </div>
+                    <div class="leaderboard-item">
+                        <div class="leaderboard-rank">3</div>
+                        <div class="leaderboard-name">Charles Leclerc</div>
+                        <div class="leaderboard-score">23</div>
+                    </div>
+                    <div class="leaderboard-item">
+                        <div class="leaderboard-rank">4</div>
+                        <div class="leaderboard-name">Fernando Alonso</div>
+                        <div class="leaderboard-score">18</div>
+                    </div>
+                    <div class="leaderboard-item">
+                        <div class="leaderboard-rank">5</div>
+                        <div class="leaderboard-name">Lando Norris</div>
+                        <div class="leaderboard-score">15</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sección de Aprendizaje Interactivo -->
+        <div class="section">
+            <h2><i class="fas fa-graduation-cap"></i> Zona de Aprendizaje Interactivo</h2>
+
+            <div class="learning-container">
+                <!-- Simulador OpenMP -->
+                <div class="learning-card omp">
+                    <h3><i class="fas fa-calculator"></i> Simulador OpenMP - Cálculo de π</h3>
+                    <p>Compara el rendimiento entre el cálculo secuencial y paralelo de π usando OpenMP.</p>
+
+                    <div class="simulator-container">
+                        <div class="control-panel">
+                            <div class="control-item">
+                                <label for="iterations">Iteraciones:</label>
+                                <input type="number" id="iterations" value="1000000" min="1000" max="100000000">
+                            </div>
+                            <div class="control-item">
+                                <label for="threads">Núm. Threads:</label>
+                                <input type="number" id="threads" value="4" min="1" max="16">
+                            </div>
+                        </div>
+
+                        <button onclick="runPiCalculation()" style="width: 100%">
+                            <i class="fas fa-play"></i> Ejecutar Comparación
+                        </button>
+
+                        <div class="results-panel">
+                            <div class="result-card">
+                                <div>Tiempo Secuencial</div>
+                                <div class="result-value" id="sequential-time">-</div>
+                                <div>ms</div>
+                            </div>
+                            <div class="result-card">
+                                <div>Tiempo Paralelo</div>
+                                <div class="result-value" id="parallel-time">-</div>
+                                <div>ms</div>
+                            </div>
+                        </div>
+
+                        <div style="margin-top: 20px;">
+                            <div style="display: flex; justify-content: space-between;">
+                                <span>Speedup:</span>
+                                <span id="speedup-value">-</span>
+                            </div>
+                            <div class="speedup-indicator">
+                                <div class="speedup-marker" id="speedup-marker" style="left: 0%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Visualizador MPI -->
+                <div class="learning-card mpi">
+                    <h3><i class="fas fa-project-diagram"></i> Visualizador MPI - Comunicación</h3>
+                    <p>Observa cómo los procesos MPI se comunican entre sí en una operación de reducción.</p>
+
+                    <div class="simulator-container">
+                        <div class="control-panel">
+                            <div class="control-item">
+                                <label for="mpi-processes">Núm. Procesos:</label>
+                                <input type="number" id="mpi-processes" value="4" min="2" max="8">
+                            </div>
+                        </div>
+
+                        <button onclick="startMpiSimulation()" style="width: 100%">
+                            <i class="fas fa-play"></i> Iniciar Simulación MPI
+                        </button>
+
+                        <div class="mpi-visualization" id="mpi-visualization">
+                            <!-- Los procesos MPI se generarán aquí dinámicamente -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Editor de Código y Ejercicios -->
+        <div class="section">
+            <h2><i class="fas fa-code"></i> Desafíos de Programación Paralela</h2>
+
+            <div class="exercise-container">
+                <div class="exercise-header">
+                    <h3>Ejercicio 1: Cálculo de Promedio de Velocidad</h3>
+                    <span class="difficulty-badge difficulty-easy">Fácil</span>
+                </div>
+
+                <p>Usa OpenMP para paralelizar el cálculo del promedio de velocidad de los pilotos de F1.</p>
+
+                <div class="code-editor">
+                    <div class="editor-header">
+                        <span>Código C con OpenMP</span>
+                        <div class="editor-actions">
+                            <button class="editor-btn run" onclick="runCode()">
+                                <i class="fas fa-play"></i> Ejecutar
+                            </button>
+                            <button class="editor-btn reset" onclick="resetCode()">
+                                <i class="fas fa-redo"></i> Reiniciar
+                            </button>
+                        </div>
+                    </div>
+                    <textarea id="code-editor-text">#include <stdio.h>
+#include <stdlib.h>
+#include <omp.h>
+
+#define NUM_PILOTOS 20
+
+int main() {
+    double velocidades[NUM_PILOTOS];
+    double suma = 0.0, promedio;
+    
+    // Inicializar velocidades (simuladas)
+    for (int i = 0; i < NUM_PILOTOS; i++) {
+        velocidades[i] = 200 + (rand() % 50); // Entre 200 y 250 km/h
+    }
+    
+    // TODO: Paralelizar este bucle con OpenMP
+    for (int i = 0; i < NUM_PILOTOS; i++) {
+        suma += velocidades[i];
+    }
+    
+    promedio = suma / NUM_PILOTOS;
+    printf("Promedio de velocidad: %.2f km/h\\n", promedio);
+    
+    return 0;
+}</textarea>
+                </div>
+
+                <div class="hint-container">
+                    <div class="hint-title">
+                        <i class="fas fa-lightbulb"></i> Pista
+                    </div>
+                    <p>Usa la directiva <code>#pragma omp parallel for reduction(+:suma)</code> para paralelizar el
+                        bucle de suma.</p>
+                </div>
+
+                <div id="code-output"
+                    style="margin-top: 15px; padding: 15px; background: black; border-radius: 5px; min-height: 100px; font-family: monospace; color: lightgreen;">
+                </div>
+            </div>
+        </div>
+
+        <!-- Estadísticas -->
+        <div class="section">
+            <h2><i class="fas fa-chart-line"></i> Estadísticas del Campeonato</h2>
+            <div id="estadisticas" class="stats-grid"></div>
+        </div>
+
+        <!-- Formulario -->
+        <div class="section">
+            <h2><i class="fas fa-plus-circle"></i> Agregar Nuevo Piloto</h2>
+            <form id="formulario-piloto">
+                <div class="form-grid">
+                    <input type="text" id="nombre" placeholder="Nombre completo" required>
+                    <input type="text" id="equipo" placeholder="Equipo (Red Bull, Ferrari...)" required>
+                    <input type="text" id="nacionalidad" placeholder="Nacionalidad">
+                    <input type="number" id="numero" placeholder="Número (1-99)" min="1" max="99">
+                    <input type="number" id="victorias" placeholder="Victorias" min="0">
+                    <input type="number" id="puntos" placeholder="Puntos" step="0.5" min="0">
+                    <input type="number" id="podios" placeholder="Podios" min="0">
+                    <input type="number" id="poles" placeholder="Poles" min="0">
+                    <input type="number" id="vueltas-rapidas" placeholder="Vueltas Rápidas" min="0">
+                </div>
+                <button type="submit"><i class="fas fa-plus"></i> Agregar Piloto</button>
+            </form>
+        </div>
+
+        <!-- Búsqueda -->
+        <div class="section">
+            <h2><i class="fas fa-search"></i> Buscar por Equipo</h2>
+            <div class="search-section">
+                <input type="text" id="buscar-equipo" placeholder="Ej: Ferrari, Mercedes, Red Bull...">
+                <button onclick="buscarPorEquipo()"><i class="fas fa-search"></i> Buscar</button>
+            </div>
+        </div>
+
+        <!-- Lista de Pilotos -->
+        <div class="section">
+            <h2><i class="fas fa-users"></i> Lista de Pilotos</h2>
+            <div id="lista-pilotos" class="pilotos-grid"></div>
+        </div>
+
+        <!-- Ejemplos de Código -->
+        <div class="parallel-section">
+            <h3><i class="fas fa-code"></i> Ejemplo OpenMP - Cálculo de π</h3>
+            <div class="code-example">
+                <pre>#pragma omp parallel for reduction(+:sum) private(x)
+for (i = 0; i < n; i++) {
+    x = (i + 0.5) / n;
+    sum += 4.0 / (1.0 + x * x);
+}
+pi = sum / n;</pre>
+            </div>
+        </div>
+
+        <div class="parallel-section">
+            <h3><i class="fas fa-code"></i> Ejemplo MPI - Comunicación Colectiva</h3>
+            <div class="code-example">
+                <pre>MPI_Bcast(&n, 1, MPI_INT, 0, MPI_COMM_WORLD);
+MPI_Reduce(&local_pi, &global_pi, 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);</pre>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Configuración global
+        const API_BASE = '/api';
+
+        // Elementos DOM
+        let estadisticasElement = document.getElementById('estadisticas');
+        let listaPilotosElement = document.getElementById('lista-pilotos');
+        let formularioPiloto = document.getElementById('formulario-piloto');
+        let buscarEquipoInput = document.getElementById('buscar-equipo');
+
+        // Inicialización
+        document.addEventListener('DOMContentLoaded', function () {
+            cargarEstadisticas();
+            cargarPilotos();
+            configurarEventListeners();
+            startMpiSimulation();
+            editor.refresh();
+            const chart = document.getElementById('telemetry-chart');
+            drawTelemetryChart([], chart);
+            addHelpButtons();
+        });
+
+        // Teoría y referencias basadas en las fuentes proporcionadas
+        const theoryData = {
+            openmp: {
+                title: "OpenMP: Programación Multihebra",
+                content: `
+                <h4>Modelo de Programación</h4>
+                <p>OpenMP sigue un modelo de memoria compartida con paralelismo Fork/Join. Soporta paralelización incremental donde:</p>
+                <ul>
+                    <li>La hebra maestra crea hebras adicionales para regiones paralelas</li>
+                    <li>La sincronización y comunicación se realiza mediante variables compartidas</li>
+                    <li>Es una API que define directivas de compilación, funciones de librería y variables de entorno</li>
+                </ul>
+                
+                <h4>Paralelización de Bucles</h4>
+                <p>OpenMP es ideal para paralelizar bucles que cumplen con:</p>
+                <ul>
+                    <li>No hay dependencias entre iteraciones</li>
+                    <li>Forma canónica del bucle</li>
+                    <li>Sin instrucciones break, exit(), goto</li>
+                </ul>
+                <p>Ejemplo de directiva: <code>#pragma omp parallel for</code></p>
+                
+                <h4>Gestión de Variables</h4>
+                <p>OpenMP distingue entre:</p>
+                <ul>
+                    <li><strong>Variables compartidas</strong>: Misma dirección en todas las hebras</li>
+                    <li><strong>Variables privadas</strong>: Cada hebra tiene su propia copia</li>
+                    <li>Por defecto, todas las variables son compartidas excepto el iterador del bucle</li>
+                </ul>
+                
+                <h4>Cláusulas Importantes</h4>
+                <ul>
+                    <li><code>private</code>: Variables privadas para cada hebra</li>
+                    <li><code>shared</code>: Variables compartidas entre hebras</li>
+                    <li><code>reduction</code>: Operaciones de reducción (suma, producto, etc.)</li>
+                    <li><code>firstprivate</code>: Variables privadas inicializadas con valores originales</li>
+                    <li><code>lastprivate</code>: Copia el valor de la última iteración</li>
+                </ul>
+            `,
+                reference: "Fuente: José Miguel Mantas Ruiz, Universidad de Granada"
+            },
+            mpi: {
+                title: "MPI: Message Passing Interface",
+                content: `
+                <h4>Modelo de Programación</h4>
+                <p>MPI sigue un modelo de paso de mensajes para computación distribuida:</p>
+                <ul>
+                    <li>Número fijo de procesos que se comunican mediante mensajes</li>
+                    <li>Modelo básico SPMD (Single Program, Multiple Data)</li>
+                    <li>Extensible a MPMD (Multiple Program, Multiple Data)</li>
+                </ul>
+                
+                <h4>Comunicadores</h4>
+                <p>Los comunicadores definen grupos de procesos + contexto:</p>
+                <ul>
+                    <li><code>MPI_COMM_WORLD</code>: Comunicador por defecto con todos los procesos</li>
+                    <li>Cada proceso tiene un identificador único (rank) dentro del comunicador</li>
+                    <li>Los mensajes se envían dentro de un contexto específico</li>
+                </ul>
+                
+                <h4>Funciones Básicas</h4>
+                <ul>
+                    <li><code>MPI_Init</code>: Inicializa el entorno MPI</li>
+                    <li><code>MPI_Finalize</code>: Finaliza el entorno MPI</li>
+                    <li><code>MPI_Comm_size</code>: Obtiene el número de procesos</li>
+                    <li><code>MPI_Comm_rank</code>: Obtiene el identificador del proceso</li>
+                    <li><code>MPI_Send</code>: Envía un mensaje</li>
+                    <li><code>MPI_Recv</code>: Recibe un mensaje</li>
+                </ul>
+                
+                <h4>Comunicación Colectiva</h4>
+                <p>Operaciones que involucran a todos los procesos de un comunicador:</p>
+                <ul>
+                    <li><code>MPI_Bcast</code>: Difusión de datos desde un proceso raíz</li>
+                    <li><code>MPI_Reduce</code>: Reducción global de datos</li>
+                    <li><code>MPI_Gather</code>: Recolección de datos</li>
+                    <li><code>MPI_Scatter</code>: Distribución de datos</li>
+                    <li><code>MPI_Barrier</code>: Sincronización de procesos</li>
+                </ul>
+            `,
+                reference: "Fuente: José Miguel Mantas Ruiz, Universidad de Granada"
+            },
+            piCalculation: {
+                title: "Cálculo de π con OpenMP",
+                content: `
+                <h4>Base Matemática</h4>
+                <p>El cálculo de π se basa en la integral:</p>
+                <p style="text-align: center">π = ∫<sub>0</sub><sup>1</sup> 4/(1+x²) dx</p>
+                <p>Que se aproxima numéricamente mediante el método del rectángulo:</p>
+                <p style="text-align: center">π ≈ (1/n) * Σ<sub>i=0</sub><sup>n-1</sup> 4/(1+((i+0.5)/n)²)</p>
+                
+                <h4>Paralelización con OpenMP</h4>
+                <p>Este cálculo es ideal para paralelizar porque:</p>
+                <ul>
+                    <li>Las iteraciones son independientes entre sí</li>
+                    <li>El trabajo puede dividirse fácilmente entre hebras</li>
+                    <li>Requiere una operación de reducción (suma)</li>
+                </ul>
+                
+                <h4>Implementación con Reducción</h4>
+                <p>La directiva de OpenMP para este caso sería:</p>
+                <pre>#pragma omp parallel for reduction(+:sum) private(x)
+for (i = 0; i < n; i++) {
+    x = (i + 0.5) / n;
+    sum += 4.0 / (1.0 + x * x);
+}
+pi = sum / n;</pre>
+                
+                <h4>Optimizaciones</h4>
+                <ul>
+                    <li>Usar <code>reduction</code> evita condiciones de carrera</li>
+                    <li>La variable <code>x</code> debe ser privada para cada hebra</li>
+                    <li>El schedule puede optimizarse según el sistema</li>
+                </ul>
+            `,
+                reference: "Basado en ejemplos de Programación Multihebra con OpenMP"
+            },
+            mpiCommunication: {
+                title: "Comunicación con MPI",
+                content: `
+                <h4>Operaciones de Envío y Recepción</h4>
+                <p>MPI proporciona dos estilos de comunicación:</p>
+                <ul>
+                    <li><strong>Punto a punto</strong>: Comunicación entre dos procesos específicos</li>
+                    <li><strong>Colectiva</strong>: Comunicación que involucra a todos los procesos en un comunicador</li>
+                </ul>
+                
+                <h4>Comunicación Punto a Punto</h4>
+                <p>Funciones básicas:</p>
+                <ul>
+                    <li><code>MPI_Send(void *buf, int count, MPI_Datatype datatype, int dest, int tag, MPI_Comm comm)</code></li>
+                    <li><code>MPI_Recv(void *buf, int count, MPI_Datatype datatype, int source, int tag, MPI_Comm comm, MPI_Status *status)</code></li>
+                </ul>
+                <p>Se pueden usar comodines como <code>MPI_ANY_SOURCE</code> y <code>MPI_ANY_TAG</code>.</p>
+                
+                <h4>Comunicación Colectiva</h4>
+                <p>Ejemplos de operaciones colectivas:</p>
+                <ul>
+                    <li><code>MPI_Bcast</code>: Difunde datos desde el proceso raíz a todos los demás</li>
+                    <li><code>MPI_Reduce</code>: Combina datos de todos los procesos usando una operación</li>
+                    <li><code>MPI_Gather</code>: Recoge datos de todos los procesos en un array</li>
+                    <li><code>MPI_Scatter</code>: Distribuye partes de un array a todos los procesos</li>
+                </ul>
+                
+                <h4>Patrones de Comunicación</h4>
+                <p>En la visualización se muestra un patrón típico de reducción:</p>
+                <ul>
+                    <li>El proceso 0 actúa como coordinador/recopilador</li>
+                    <li>Los demás procesos envían sus datos al proceso 0</li>
+                    <li>El proceso 0 realiza el procesamiento final</li>
+                </ul>
+            `,
+                reference: "Fuente: Introducción a la Interfaz de paso de mensajes (MPI)"
+            },
+            telemetry: {
+                title: "Procesamiento de Telemetría con OpenMP",
+                content: `
+                <h4>Aplicación de OpenMP en Telemetría de F1</h4>
+                <p>El procesamiento de datos de telemetría es ideal para OpenMP porque:</p>
+                <ul>
+                    <li>Los datos suelen ser grandes y requieren procesamiento intensivo</li>
+                    <li>Muchas operaciones son embeblamente paralelizables</li>
+                    <li>Se pueden procesar múltiples canales simultáneamente</li>
+                </ul>
+                
+                <h4>Operaciones Típicas</h4>
+                <p>En el análisis de telemetría de F1 se realizan operaciones como:</p>
+                <ul>
+                    <li>Cálculo de valores estadísticos (media, máximo, mínimo)</li>
+                    <li>Filtrado y suavizado de señales</li>
+                    <li>Detección de eventos (frenadas, aceleraciones)</li>
+                    <li>Integración de señales para calcular distancias o consumos</li>
+                </ul>
+                
+                <h4>Ejemplo de Paralelización</h4>
+                <p>Para calcular el máximo de velocidad en diferentes segmentos:</p>
+                <pre>#pragma omp parallel for
+for (int i = 0; i < num_segments; i++) {
+    segment_max[i] = find_max_in_segment(telemetry_data, i);
+}</pre>
+                
+                <h4>Consideraciones de Rendimiento</h4>
+                <ul>
+                    <li>Los datos de telemetría pueden ser demasiado grandes para la cache</li>
+                    <li>Es importante optimizar el acceso a memoria</li>
+                    <li>El balance de carga entre hebras es crucial</li>
+                </ul>
+            `,
+                reference: "Aplicación de conceptos de OpenMP a telemetría de F1"
+            },
+            strategy: {
+                title: "Simulación de Estrategia con MPI",
+                content: `
+                <h4>Simulación Distribuida con MPI</h4>
+                <p>La simulación de estrategias de carrera en F1 es un problema ideal para MPI porque:</p>
+                <ul>
+                    <li>Se pueden evaluar múltiples estrategias simultáneamente</li>
+                    <li>Cada proceso puede simular un escenario diferente</li>
+                    <li>Los resultados se pueden combinar para encontrar la estrategia óptima</li>
+                </ul>
+                
+                <h4>Modelo de Simulación</h4>
+                <p>Una aproximación típica sería:</p>
+                <ul>
+                    <li>El proceso 0 actúa como coordinador</li>
+                    <li>Los procesos workers simulan diferentes estrategias</li>
+                    <li>Se utiliza <code>MPI_Reduce</code> para encontrar los mejores resultados</li>
+                </ul>
+                
+                <h4>Parámetros de Estrategia</h4>
+                <p>En la simulación se consideran factores como:</p>
+                <ul>
+                    <li>Número de paradas en boxes</li>
+                    <li>Tipo de neumáticos en cada parada</li>
+                    <li>Momento óptimo para parar</li>
+                    <li>Efecto del tráfico y adelantamientos</li>
+                    <li>Condiciones climáticas variables</li>
+                </ul>
+                
+                <h4>Implementación con MPI</h4>
+                <p>Esquema básico de implementación:</p>
+                <pre>if (rank == 0) {
+    // Proceso coordinador
+    // Distribuir estrategias a simular
+    // Recoger y comparar resultados
+} else {
+    // Procesos workers
+    // Simular estrategia asignada
+    // Enviar resultados al proceso 0
+}</pre>
+            `,
+                reference: "Aplicación de MPI a simulación de estrategias de F1"
+            }
+        };
+
+        // Función para mostrar el modal de teoría
+        function showTheory(topic) {
+            const data = theoryData[topic];
+            if (!data) return;
+
+            document.getElementById('modal-title').textContent = data.title;
+            document.getElementById('modal-content').innerHTML = data.content;
+            document.getElementById('modal-reference').textContent = data.reference;
+
+            document.getElementById('theory-modal').classList.add('active');
+        }
+
+        // Función para cerrar el modal
+        function closeTheoryModal() {
+            document.getElementById('theory-modal').classList.remove('active');
+        }
+
+        // Cerrar modal al hacer clic fuera del contenido
+        document.getElementById('theory-modal').addEventListener('click', function (e) {
+            if (e.target === this) {
+                closeTheoryModal();
+            }
+        });
+
+        // Cerrar modal con la tecla Escape
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') {
+                closeTheoryModal();
+            }
+        });
+
+        // Configurar event listeners
+        function configurarEventListeners() {
+            formularioPiloto.addEventListener('submit', manejarEnvioFormulario);
+            buscarEquipoInput.addEventListener('keypress', function (e) {
+                if (e.key === 'Enter') {
+                    buscarPorEquipo();
+                }
+            });
+        }
+
+        // Función para añadir botones de ayuda a las secciones relevantes
+        function addHelpButtons() {
+            // Añadir botón a la sección de OpenMP
+            const openmpSection = document.querySelector('.learning-card.omp h3');
+            if (openmpSection) {
+                const helpButton = document.createElement('button');
+                helpButton.className = 'help-button';
+                helpButton.innerHTML = '?';
+                helpButton.title = 'Ayuda sobre OpenMP';
+                helpButton.onclick = () => showTheory('openmp');
+                openmpSection.appendChild(helpButton);
+            }
+
+            // Añadir botón a la sección de MPI
+            const mpiSection = document.querySelector('.learning-card.mpi h3');
+            if (mpiSection) {
+                const helpButton = document.createElement('button');
+                helpButton.className = 'help-button';
+                helpButton.innerHTML = '?';
+                helpButton.title = 'Ayuda sobre MPI';
+                helpButton.onclick = () => showTheory('mpi');
+                mpiSection.appendChild(helpButton);
+            }
+
+            // Añadir botón al simulador de π
+            const piSimulator = document.querySelector('.learning-card.omp .simulator-container');
+            if (piSimulator) {
+                const helpButton = document.createElement('button');
+                helpButton.className = 'help-button';
+                helpButton.innerHTML = '?';
+                helpButton.title = 'Ayuda sobre el cálculo de π';
+                helpButton.style.position = 'absolute';
+                helpButton.style.top = '10px';
+                helpButton.style.right = '10px';
+                helpButton.onclick = () => showTheory('piCalculation');
+                piSimulator.style.position = 'relative';
+                piSimulator.appendChild(helpButton);
+            }
+
+            // Añadir botón al visualizador MPI
+            const mpiVisualizer = document.querySelector('.learning-card.mpi .simulator-container');
+            if (mpiVisualizer) {
+                const helpButton = document.createElement('button');
+                helpButton.className = 'help-button';
+                helpButton.innerHTML = '?';
+                helpButton.title = 'Ayuda sobre comunicación MPI';
+                helpButton.style.position = 'absolute';
+                helpButton.style.top = '10px';
+                helpButton.style.right = '10px';
+                helpButton.onclick = () => showTheory('mpiCommunication');
+                mpiVisualizer.style.position = 'relative';
+                mpiVisualizer.appendChild(helpButton);
+            }
+
+            // Añadir botón a la sección de telemetría
+            const telemetrySection = document.querySelector('.telemetry-container');
+            if (telemetrySection) {
+                const title = telemetrySection.previousElementSibling;
+                if (title && title.tagName === 'H2') {
+                    const helpButton = document.createElement('button');
+                    helpButton.className = 'help-button';
+                    helpButton.innerHTML = '?';
+                    helpButton.title = 'Ayuda sobre procesamiento de telemetría';
+                    helpButton.onclick = () => showTheory('telemetry');
+                    title.appendChild(helpButton);
+                }
+            }
+
+            // Añadir botón a la sección de estrategia
+            const strategySection = document.querySelector('.strategy-simulator');
+            if (strategySection) {
+                const title = strategySection.closest('.telemetry-container').previousElementSibling;
+                if (title && title.tagName === 'H2') {
+                    const helpButton = document.createElement('button');
+                    helpButton.className = 'help-button';
+                    helpButton.innerHTML = '?';
+                    helpButton.title = 'Ayuda sobre simulación de estrategia';
+                    helpButton.onclick = () => showTheory('strategy');
+                    title.appendChild(helpButton);
+                }
+            }
+        }
+
+        // Cargar estadísticas
+        async function cargarEstadisticas() {
+            try {
+                // Simulamos datos ya que no tenemos una API real
+                const data = {
+                    total_pilotos: 20,
+                    total_victorias: 105,
+                    total_puntos: 2456.5,
+                    piloto_mas_victorias: "Lewis Hamilton",
+                    victorias_piloto: 103
+                };
+
+                estadisticasElement.innerHTML = `
+                    <div class="stat-card">
+                        <h3>Total Pilotos</h3>
+                        <div class="value">${data.total_pilotos}</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Total Victorias</h3>
+                        <div class="value">${data.total_victorias}</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Total Puntos</h3>
+                        <div class="value">${data.total_puntos.toFixed(1)}</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Máximo Ganador</h3>
+                        <div class="value">${data.piloto_mas_victorias}</div>
+                        <div>${data.victorias_piloto} victorias</div>
+                    </div>
+                `;
+            } catch (error) {
+                console.error('Error cargando estadísticas:', error);
+                mostrarNotificacion('Error al cargar estadísticas', 'error');
+            }
+        }
+
+        // Cargar pilotos
+        async function cargarPilotos() {
+            try {
+                // Simulamos datos de pilotos
+                const pilotos = [
+                    {
+                        id: 1,
+                        nombre: "Lewis Hamilton",
+                        equipo: "Mercedes",
+                        nacionalidad: "Británico",
+                        numero: 44,
+                        victorias: 103,
+                        puntos: 4637.5,
+                        podios: 197,
+                        poles: 104,
+                        vueltas_rapidas: 61
+                    },
+                    {
+                        id: 2,
+                        nombre: "Max Verstappen",
+                        equipo: "Red Bull",
+                        nacionalidad: "Holandés",
+                        numero: 1,
+                        victorias: 60,
+                        puntos: 2586.5,
+                        podios: 102,
+                        poles: 37,
+                        vueltas_rapidas: 30
+                    },
+                    {
+                        id: 3,
+                        nombre: "Charles Leclerc",
+                        equipo: "Ferrari",
+                        nacionalidad: "Monegasco",
+                        numero: 16,
+                        victorias: 5,
+                        puntos: 1134,
+                        podios: 32,
+                        poles: 23,
+                        vueltas_rapidas: 7
+                    }
+                ];
+                mostrarPilotos(pilotos);
+            } catch (error) {
+                console.error('Error cargando pilotos:', error);
+                mostrarNotificacion('Error al cargar pilotos', 'error');
+            }
+        }
+
+        // Mostrar pilotos en grid
+        function mostrarPilotos(pilotos) {
+            if (pilotos.length === 0) {
+                listaPilotosElement.innerHTML = '<div class="no-data">No se encontraron pilotos</div>';
+                return;
+            }
+
+            listaPilotosElement.innerHTML = pilotos.map(piloto => `
+                <div class="piloto-card" data-id="${piloto.id}">
+                    <h3>${piloto.nombre}</h3>
+                    <div class="equipo">${piloto.equipo} • #${piloto.numero}</div>
+                    <div class="nacionalidad">${piloto.nacionalidad}</div>
+                    
+                    <div class="stats">
+                        <div class="stat">🏆 ${piloto.victorias} Victorias</div>
+                        <div class="stat">⭐ ${piloto.podios} Podios</div>
+                        <div class="stat">🔥 ${piloto.poles} Poles</div>
+                        <div class="stat">⚡ ${piloto.vueltas_rapidas} VR</div>
+                        <div class="stat">📊 ${piloto.puntos} Puntos</div>
+                    </div>
+                    
+                    <div class="actions" style="margin-top: 15px; display: flex; gap: 10px;">
+                        <button onclick="editarPiloto(${piloto.id})" style="background: var(--mpi-blue); padding: 8px 12px; font-size: 0.9em;">✏️ Editar</button>
+                        <button onclick="eliminarPiloto(${piloto.id})" style="background: var(--f1-red); padding: 8px 12px; font-size: 0.9em;">🗑️ Eliminar</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Manejar envío de formulario
+        async function manejarEnvioFormulario(e) {
+            e.preventDefault();
+
+            const pilotoData = {
+                nombre: document.getElementById('nombre').value,
+                equipo: document.getElementById('equipo').value,
+                nacionalidad: document.getElementById('nacionalidad').value,
+                numero: parseInt(document.getElementById('numero').value),
+                victorias: parseInt(document.getElementById('victorias').value),
+                puntos: parseFloat(document.getElementById('puntos').value),
+                podios: parseInt(document.getElementById('podios').value),
+                poles: parseInt(document.getElementById('poles').value),
+                vueltas_rapidas: parseInt(document.getElementById('vueltas-rapidas').value)
+            };
+
+            try {
+                // Simulamos el guardado
+                console.log("Guardando piloto:", pilotoData);
+                mostrarNotificacion('Piloto agregado exitosamente', 'success');
+                formularioPiloto.reset();
+
+                // Recargamos los datos
+                cargarPilotos();
+                cargarEstadisticas();
+            } catch (error) {
+                console.error('Error:', error);
+                mostrarNotificacion('Error al agregar piloto', 'error');
+            }
+        }
+
+        // Buscar por equipo
+        async function buscarPorEquipo() {
+            const equipo = buscarEquipoInput.value.trim();
+            if (!equipo) {
+                cargarPilotos();
+                return;
+            }
+
+            try {
+                // Simulamos búsqueda
+                const pilotosSimulados = [
+                    {
+                        id: 2,
+                        nombre: "Max Verstappen",
+                        equipo: "Red Bull",
+                        nacionalidad: "Holandés",
+                        numero: 1,
+                        victorias: 60,
+                        puntos: 2586.5,
+                        podios: 102,
+                        poles: 37,
+                        vueltas_rapidas: 30
+                    }
+                ];
+
+                // Filtramos por equipo (simulado)
+                const pilotosFiltrados = pilotosSimulados.filter(p =>
+                    p.equipo.toLowerCase().includes(equipo.toLowerCase())
+                );
+
+                mostrarPilotos(pilotosFiltrados);
+            } catch (error) {
+                console.error('Error buscando pilotos:', error);
+                mostrarNotificacion('Error al buscar pilotos', 'error');
+            }
+        }
+
+        // Funciones CRUD adicionales
+        async function eliminarPiloto(id) {
+            if (!confirm('¿Estás seguro de que quieres eliminar este piloto?')) {
+                return;
+            }
+
+            try {
+                // Simulamos eliminación
+                console.log("Eliminando piloto con ID:", id);
+                mostrarNotificacion('Piloto eliminado exitosamente', 'success');
+
+                // Recargamos los datos
+                cargarPilotos();
+                cargarEstadisticas();
+            } catch (error) {
+                console.error('Error:', error);
+                mostrarNotificacion('Error al eliminar piloto', 'error');
+            }
+        }
+
+        async function editarPiloto(id) {
+            // Implementar lógica de edición
+            mostrarNotificacion('Funcionalidad de edición en desarrollo', 'info');
+        }
+
+        // Notificaciones
+        function mostrarNotificacion(mensaje, tipo = 'info') {
+            // Crear notificación toast
+            const toast = document.createElement('div');
+            toast.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 15px 20px;
+                border-radius: 8px;
+                color: white;
+                font-weight: bold;
+                z-index: 1000;
+                animation: slideIn 0.3s ease;
+            `;
+
+            switch (tipo) {
+                case 'success':
+                    toast.style.background = 'var(--grid-green)';
+                    break;
+                case 'error':
+                    toast.style.background = 'var(--f1-red)';
+                    break;
+                case 'warning':
+                    toast.style.background = 'var(--omp-yellow)';
+                    break;
+                default:
+                    toast.style.background = 'var(--mpi-blue)';
+            }
+
+            toast.textContent = mensaje;
+            document.body.appendChild(toast);
+
+            setTimeout(() => {
+                toast.remove();
+            }, 3000);
+        }
+
+        // Cargar datos iniciales
+        cargarEstadisticas();
+        cargarPilotos();
+        // Inicializar el editor de código
+        var editor = CodeMirror.fromTextArea(document.getElementById('code-editor-text'), {
+            mode: 'text/x-csrc',
+            theme: 'dracula',
+            lineNumbers: true,
+            indentUnit: 4,
+            smartIndent: true
+        });
+
+        editor.setSize('100%', '300px');
+
+        // Función para ejecutar el cálculo de π
+        function runPiCalculation() {
+            const iterations = parseInt(document.getElementById('iterations').value);
+            const threads = parseInt(document.getElementById('threads').value);
+
+            // Simular cálculo (en un caso real, esto se conectaría a un backend)
+            const sequentialTime = iterations / 10000; // Simulación
+            const parallelTime = sequentialTime / threads * 1.2; // Simulación con overhead
+
+            // Mostrar resultados
+            document.getElementById('sequential-time').textContent = sequentialTime.toFixed(2);
+            document.getElementById('parallel-time').textContent = parallelTime.toFixed(2);
+
+            // Calcular y mostrar speedup
+            const speedup = sequentialTime / parallelTime;
+            document.getElementById('speedup-value').textContent = speedup.toFixed(2) + 'x';
+
+            // Mover el marcador de speedup (limitado a 10x para visualización)
+            const speedupPercent = Math.min(speedup / 10 * 100, 100);
+            document.getElementById('speedup-marker').style.left = speedupPercent + '%';
+        }
+
+        // Función para simular MPI
+        function startMpiSimulation() {
+            const processCount = parseInt(document.getElementById('mpi-processes').value);
+            const visualization = document.getElementById('mpi-visualization');
+            visualization.innerHTML = '';
+
+            // Crear visualización de procesos
+            for (let i = 0; i < processCount; i++) {
+                const process = document.createElement('div');
+                process.className = 'mpi-process';
+                process.innerHTML = `
+                    <div class="process-id">${i}</div>
+                    <div class="process-data">
+                        <div>Dato: ${Math.round(Math.random() * 100)}</div>
+                    </div>
+                `;
+                visualization.appendChild(process);
+            }
+
+            // Simular comunicación (proceso 0 recoge datos de todos)
+            setTimeout(() => {
+                for (let i = 1; i < processCount; i++) {
+                    const message = document.createElement('div');
+                    message.className = 'message';
+                    message.textContent = 'Enviando dato';
+                    message.style.top = '50%';
+                    message.style.left = '50%';
+
+                    const sourceProcess = visualization.children[i];
+                    const targetProcess = visualization.children[0];
+
+                    sourceProcess.appendChild(message);
+                    message.style.opacity = '1';
+
+                    // Animación de mensaje
+                    setTimeout(() => {
+                        message.style.opacity = '0';
+                        setTimeout(() => {
+                            message.remove();
+                            // Actualizar proceso destino
+                            targetProcess.querySelector('.process-data').innerHTML +=
+                                `<div>Recibido de ${i}</div>`;
+                        }, 300);
+                    }, 1000);
+                }
+            }, 500);
+        }
+
+        // Función para ejecutar código (simulado)
+        function runCode() {
+            const output = document.getElementById('code-output');
+            output.innerHTML = '<div>Compilando y ejecutando código...</div>';
+
+            // Simular compilación y ejecución
+            setTimeout(() => {
+                const code = editor.getValue();
+
+                // Detectar si se usó OpenMP
+                if (code.includes('omp parallel')) {
+                    output.innerHTML = `
+                        <div>¡Correcto! Has utilizado OpenMP para paralelizar el cálculo.</div>
+                        <div>Promedio de velocidad: 227.85 km/h</div>
+                        <div>Tiempo de ejecución: 0.45 ms (con 4 threads)</div>
+                        <div style="color: lightgreen;">¡Desafío completado!</div>
+                    `;
+                } else {
+                    output.innerHTML = `
+                        <div>El código se ejecutó correctamente, pero no se detectó uso de OpenMP.</div>
+                        <div>Promedio de velocidad: 227.85 km/h</div>
+                        <div>Tiempo de ejecución: 1.82 ms (secuencial)</div>
+                        <div style="color: orange;">Intenta paralelizar el bucle usando OpenMP para mejorar el rendimiento.</div>
+                    `;
+                }
+            }, 1500);
+        }
+
+        // Función para reiniciar el código al ejemplo original
+        function resetCode() {
+            editor.setValue(`#include <stdio.h>
+#include <stdlib.h>
+#include <omp.h>
+
+#define NUM_PILOTOS 20
+
+int main() {
+    double velocidades[NUM_PILOTOS];
+    double suma = 0.0, promedio;
+    
+    // Inicializar velocidades (simuladas)
+    for (int i = 0; i < NUM_PILOTOS; i++) {
+        velocidades[i] = 200 + (rand() % 50); // Entre 200 y 250 km/h
+    }
+    
+    // TODO: Paralelizar este bucle con OpenMP
+    for (int i = 0; i < NUM_PILOTOS; i++) {
+        suma += velocidades[i];
+    }
+    
+    promedio = suma / NUM_PILOTOS;
+    printf("Promedio de velocidad: %.2f km/h\\n", promedio);
+    
+    return 0;
+}`);
+            document.getElementById('code-output').innerHTML = '';
+        }
+        // Datos de ejemplo para telemetría
+        const sampleTelemetry = {
+            speed: [82, 85, 87, 92, 105, 120, 135, 152, 168, 185, 203, 210, 215, 218, 220, 218, 210, 195, 180, 165, 150, 135, 120, 110, 100, 95, 90, 85, 82, 80],
+            rpm: [4500, 4600, 4700, 4900, 5200, 5600, 6100, 6700, 7300, 7900, 8500, 8900, 9100, 9200, 9200, 9100, 8900, 8600, 8200, 7800, 7300, 6800, 6300, 5800, 5400, 5100, 4800, 4600, 4500, 4400],
+            throttle: [30, 35, 40, 45, 55, 65, 75, 85, 95, 100, 100, 100, 100, 100, 100, 100, 90, 80, 70, 60, 50, 40, 30, 25, 20, 15, 10, 5, 0, 0],
+            brake: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 15, 25, 35, 45, 55, 65, 75, 80, 70, 60, 50, 40, 30, 20]
+        };
+
+        // Función para procesar telemetría con OpenMP (simulado)
+        function processTelemetry() {
+            const analysisType = document.getElementById('analysis-type').value;
+            const console = document.getElementById('telemetry-console');
+            const chart = document.getElementById('telemetry-chart');
+
+            console.innerHTML = '';
+            chart.querySelectorAll('.data-point').forEach(point => point.remove());
+
+            addConsoleLine(console, 'Iniciando procesamiento de telemetría con OpenMP...', 'command');
+            addConsoleLine(console, 'Cargando datos de telemetría...', 'output');
+
+            // Simular procesamiento
+            setTimeout(() => {
+                addConsoleLine(console, 'Compilando código con directivas OpenMP...', 'output');
+
+                setTimeout(() => {
+                    addConsoleLine(console, 'Ejecutando en paralelo con 4 threads...', 'output');
+
+                    setTimeout(() => {
+                        // Mostrar resultados
+                        const data = sampleTelemetry[analysisType];
+                        const maxVal = Math.max(...data);
+                        const avgVal = data.reduce((a, b) => a + b, 0) / data.length;
+                        const processTime = (120 + Math.random() * 80).toFixed(2);
+                        const speedup = (3.2 + Math.random() * 0.8).toFixed(2);
+
+                        addConsoleLine(console, `Procesamiento completado en ${processTime} ms`, 'output');
+                        addConsoleLine(console, `Speedup: ${speedup}x usando 4 threads`, 'output');
+
+                        // Actualizar estadísticas
+                        document.getElementById('max-speed').textContent = maxVal;
+                        document.getElementById('avg-speed').textContent = avgVal.toFixed(1);
+                        document.getElementById('process-time').textContent = processTime;
+                        document.getElementById('telemetry-speedup').textContent = speedup;
+
+                        // Dibujar gráfico
+                        drawTelemetryChart(data, chart);
+
+                    }, 800);
+                }, 800);
+            }, 800);
+        }
+
+        // Función para dibujar gráfico de telemetría
+        function drawTelemetryChart(data, chartElement) {
+            const maxValue = Math.max(...data);
+            const width = chartElement.offsetWidth;
+            const height = chartElement.offsetHeight;
+
+            data.forEach((value, index) => {
+                const point = document.createElement('div');
+                point.className = 'data-point';
+
+                // Calcular posición
+                const xPos = (index / (data.length - 1)) * width;
+                const yPos = height - (value / maxValue) * height;
+
+                point.style.left = `${xPos}px`;
+                point.style.bottom = `${yPos}px`;
+
+                chartElement.appendChild(point);
+            });
+        }
+
+        // Función para simular estrategia con MPI
+        function simulateStrategy(stops) {
+            const console = document.getElementById('strategy-console');
+            console.innerHTML = '';
+
+            addConsoleLine(console, `Iniciando simulación de estrategia con ${stops} parada(s)...`, 'command');
+            addConsoleLine(console, 'Inicializando procesos MPI...', 'output');
+
+            // Simular cálculo con MPI
+            setTimeout(() => {
+                addConsoleLine(console, `Ejecutando simulación con 8 procesos MPI...`, 'output');
+
+                setTimeout(() => {
+                    // Generar resultados aleatorios
+                    const bestTime = (78 + Math.random() * 10).toFixed(3);
+                    const avgTime = (82 + Math.random() * 8).toFixed(3);
+                    const tireWear = (12 + Math.random() * 8).toFixed(1);
+
+                    addConsoleLine(console, `Simulación completada. Mejor tiempo: ${bestTime}s`, 'output');
+                    addConsoleLine(console, `Tiempo promedio: ${avgTime}s | Desgaste de neumáticos: ${tireWear}%`, 'output');
+
+                    if (stops === 1) {
+                        addConsoleLine(console, 'Recomendación: Estrategia ÓPTIMA para este circuito', 'output');
+                    } else if (stops === 2) {
+                        addConsoleLine(console, 'Recomendación: Estrategia ACEPTABLE', 'output');
+                    } else {
+                        addConsoleLine(console, 'Recomendación: Estrategia NO ÓPTIMA', 'output');
+                    }
+
+                }, 1000);
+            }, 800);
+        }
+
+        // Función para análisis estadístico con MPI
+        function runStatisticalAnalysis() {
+            const metric = document.getElementById('analysis-metric').value;
+            const processes = document.getElementById('mpi-processes-stats').value;
+            const console = document.getElementById('strategy-console');
+
+            console.innerHTML = '';
+            addConsoleLine(console, `Ejecutando análisis de "${metric}" con ${processes} procesos MPI...`, 'command');
+
+            // Simular análisis con MPI
+            setTimeout(() => {
+                addConsoleLine(console, 'Realizando operaciones de reducción MPI...', 'output');
+
+                setTimeout(() => {
+                    // Generar resultados aleatorios
+                    const statSum = (850 + Math.random() * 200).toFixed(1);
+                    const statAvg = (42.5 + Math.random() * 10).toFixed(2);
+                    const statMax = (95 + Math.random() * 10).toFixed(1);
+                    const statMin = (12 + Math.random() * 8).toFixed(1);
+
+                    // Actualizar UI
+                    document.getElementById('stat-sum').textContent = statSum;
+                    document.getElementById('stat-avg').textContent = statAvg;
+                    document.getElementById('stat-max').textContent = statMax;
+                    document.getElementById('stat-min').textContent = statMin;
+
+                    addConsoleLine(console, `Análisis completado. Suma: ${statSum} | Promedio: ${statAvg}`, 'output');
+                    addConsoleLine(console, `Máximo: ${statMax} | Mínimo: ${statMin}`, 'output');
+
+                }, 1000);
+            }, 800);
+        }
+
+        // Función auxiliar para añadir líneas a la consola
+        function addConsoleLine(consoleElement, text, type = 'output') {
+            const line = document.createElement('div');
+            line.className = 'console-line';
+
+            if (type === 'command') {
+                line.innerHTML = `<span class="console-command">></span> ${text}`;
+            } else if (type === 'error') {
+                line.innerHTML = `<span class="console-error">Error:</span> ${text}`;
+            } else {
+                line.innerHTML = `<span class="console-output">${text}</span>`;
+            }
+
+            consoleElement.appendChild(line);
+            consoleElement.scrollTop = consoleElement.scrollHeight;
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,61 @@
+services:
+  postgres-formula1:
+    image: postgres:15-alpine
+    container_name: postgres-formula1
+    environment:
+      POSTGRES_USER: formula1_user
+      POSTGRES_PASSWORD: formula1_password
+      POSTGRES_DB: formula1_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U formula1_user -d formula1_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  backend-formula1:
+    build: .
+    container_name: backend-formula1
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env
+    environment:
+      - DB_HOST=postgres-formula1
+      - DB_PORT=5432
+      - DB_USER=formula1_user
+      - DB_PASSWORD=formula1_password
+      - DB_NAME=formula1_db
+      - DB_SSLMODE=disable
+      - PORT=8080
+    depends_on:
+      postgres-formula1:
+        condition: service_healthy
+    # Comentamos los volumes para que no sobrescriban la build
+    # volumes:
+    #   - .:/app
+    #   - ../frontend-html:/app/frontend
+    volumes:
+    - ../frontend-html:/app/frontend  
+    restart: unless-stopped
+    command: ["./wait-for-postgres.sh", "./formula1-crud"]
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin-formula1
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@formula1.com
+      PGADMIN_DEFAULT_PASSWORD: admin123
+    ports:
+      - "5050:80"
+    depends_on:
+      - postgres-formula1
+    restart: unless-stopped
+
+volumes:
+  postgres-data:
