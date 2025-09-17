@@ -156,6 +156,61 @@ docker-compose down
 docker exec -it postgres-formula1 psql -U formula1_user -d formula1_db
 ```
 
+### 4. Si el problema persiste, prueba ejecutar el backend manualmente:
+```bash
+# Ejecutar el backend en modo interactivo para ver los errores
+docker-compose run --rm backend-formula1 sh
+
+# Dentro del contenedor, prueba:
+./wait-for-postgres.sh postgres-formula1 "./formula1-crud"
+```
+
+### 5. Solución alternativa - Recrear todo desde cero:
+```bash
+# Parar todo
+docker-compose down -v
+
+# Eliminar imágenes y contenedores huérfanos
+docker system prune -a -f
+
+# Reconstruir con más verbosidad
+docker-compose build --no-cache --progress=plain
+
+# Iniciar solo PostgreSQL primero
+docker-compose up -d postgres-formula1
+
+# Esperar a que PostgreSQL esté listo
+sleep 10
+
+# Verificar que PostgreSQL funciona
+docker-compose exec postgres-formula1 psql -U formula1_user -d formula1_db -c "SELECT 1;"
+
+# Ahora iniciar el backend
+docker-compose up -d backend-formula1
+
+# Ver logs del backend
+docker-compose logs -f backend-formula1
+```
+
+### 6. Si sigue fallando, modifica el Dockerfile para debugging:
+Edita el `Dockerfile` y añade esto al final:
+```dockerfile
+# Añade esto para debugging
+CMD ["sh", "-c", "echo 'Esperando PostgreSQL...' && ./wait-for-postgres.sh postgres-formula1 && echo 'Iniciando aplicación...' && ./formula1-crud"]
+```
+
+### 7. Prueba con un comando más simple:
+```bash
+# Ejecutar manualmente para ver el error real
+docker-compose run --rm backend-formula1 ./formula1-crud
+```
+
+### 8. Verifica que el binario se creó correctamente:
+```bash
+docker-compose run --rm backend-formula1 ls -la /app
+
+# Deberías ver formula1-crud en la lista
+```
 ### Problemas comunes
 
 1. **Puerto ya en uso**: Asegúrate de que los puertos 8080, 5432 y 5050 estén libres
@@ -226,5 +281,6 @@ Si tienes problemas o preguntas:
 3. Contacta al mantenedor del proyecto
 
 ---
+
 
 ¡Disfruta explorando y gestionando los datos de pilotos de Fórmula 1! 🏁
