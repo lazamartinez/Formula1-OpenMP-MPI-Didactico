@@ -36,14 +36,11 @@ services:
     depends_on:
       postgres-formula1:
         condition: service_healthy
-    # Comentamos los volumes para que no sobrescriban la build
-    # volumes:
-    #   - .:/app
-    #   - ../frontend-html:/app/frontend
     volumes:
-    - ../frontend-html:/app/frontend  
+      - ../frontend-html:/app/frontend
     restart: unless-stopped
-    command: ["./wait-for-postgres.sh", "./formula1-crud"]
+    # Comando simplificado - el script se crea internamente en el Dockerfile
+    command: ["/bin/sh", "-c", "/app/wait-for-postgres.sh"]
 
   pgadmin:
     image: dpage/pgadmin4
